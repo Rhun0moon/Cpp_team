@@ -55,7 +55,12 @@ int main()
 	setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);    // 필요없는 부분 지움
 
 	scene = Scene::create("틀린그림찾기", "Images/problem.png");               // 장면 생성
-	auto problem = Object::create("Images/problem.png", scene, 0, 0);     // 오브젝트가 장면(scene)을 위에 올라가서 가림
+
+	auto timer = Timer::create(10.f);              // 타이머 10초
+	showTimer(timer);                                       // 타이머 보이도록 
+	auto game_exit = Timer::create(3.f);              // 게임 끝을 위한 타이머 3초
+
+	auto problem = Object::create("Images/problem_ex.png", scene, 0, 0);     // 오브젝트가 장면(scene)을 위에 올라가서 가림
 	heart1 = createObject("Images/ex_heart_64.png");
 	heart2 = createObject("Images/ex_heart_64.png");
 	heart3 = createObject("Images/ex_heart_64.png");
@@ -65,6 +70,8 @@ int main()
 	showObject(heart1);
 	showObject(heart2);
 	showObject(heart3);
+
+
 
 	const auto num_of_differences = 7;
 
@@ -109,20 +116,33 @@ int main()
 			if (life == 1) hideObject(heart1);
 			life--;
 		}
-
+		timer->setOnTimerCallback([&](TimerPtr)->bool {
+			showMessage("타임 오버 실패 - 3초후 자동 꺼짐");
+			game_exit->start();
+			return true;
+			});
+		
 		if (life == 0) {
-			endGame();
+			showMessage("목숨 없음 실패 - 3초후 자동 꺼짐");
+			game_exit->start();
 		}
 
 		if (count == num_of_differences) {
-			showMessage("성공, 다 찾았다!!!");
+			timer->stop();
+			showMessage("성공 - 3초후 자동 꺼짐");
+			game_exit->start();
 		}
+
+		game_exit->setOnTimerCallback([&](TimerPtr)->bool {
+			endGame();
+			return true;
+			});
 
 		return true;
 	});
 
-	showMessage("좌우에 틀린 곳을 찾아보세요.");
+	//showMessage("좌우에 틀린 곳을 찾아보세요.");
+	timer->start();
 	startGame(scene);
-
 	return 0;
 }
