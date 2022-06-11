@@ -12,7 +12,9 @@ public:
 	}
 };
 
-ScenePtr scene = nullptr;            // scene 선언, nullptr는 null 포인터 값을 의미
+ScenePtr scene = nullptr;            // 바탕을 위한 그림, nullptr는 null 포인터 값을 의미
+SceneID sceneID;
+ObjectID heart1, heart2, heart3;           // 목숨을 위한 그림
 const auto check_radius = 25;   // 체크가 중앙에 오도록 하기 위해 뺀 값
 
 class DifferencePoint {
@@ -22,18 +24,28 @@ class DifferencePoint {
 
 public:
 	DifferencePoint(int lcx, int rcx, int cy, int r) : left_rect(lcx, cy, r), right_rect(rcx, cy, r) {
-		left_check = Object::create("Images/check.png", scene, lcx - check_radius, cy - check_radius, false);
-		right_check = Object::create("Images/check.png", scene, rcx - check_radius, cy - check_radius, false);
+		left_check = Object::create("Images/ex_right_64.png", scene, lcx - check_radius, cy - check_radius, false);
+		right_check = Object::create("Images/ex_right_64.png", scene, rcx - check_radius, cy - check_radius, false);
 	}
 	bool checkIn(int x, int y) const {        // 마우스가 올바른 곳을 클릭했는지 판단 - 예/아니요
 		return left_rect.checkIn(x, y) || right_rect.checkIn(x, y);        // Rect의 checkIn으로 왼쪽과 오른쪽 중 어디든 상관없이 속하는지만 판단
 	}
-	void show() {                    // 오른쪽 왼쪽에 초록그림을 출력함
+	void show() {                    // 오른쪽 왼쪽에 초록 그림을 출력함
 		left_check->show();
 		right_check->show();
 
 		shown = true;
 	}
+
+	void wrong_show() {                    // 오른쪽 왼쪽에 빨강 그림을 출력함
+		setObjectImage(left_check->ID(), "Images/ex_wrong_64.png");
+		setObjectImage(right_check->ID(), "Images/ex_wrong_64.png");
+		left_check->show();
+		right_check->show();
+
+		shown = true;
+	}
+
 	bool found() const { return shown; }
 };
 
@@ -43,18 +55,32 @@ int main()
 	setGameOption(GameOption::GAME_OPTION_MESSAGE_BOX_BUTTON, false);    // 필요없는 부분 지움
 
 	scene = Scene::create("틀린그림찾기", "Images/problem.png");               // 장면 생성
-
 	auto problem = Object::create("Images/problem.png", scene, 0, 0);     // 오브젝트가 장면(scene)을 위에 올라가서 가림
+	heart1 = createObject("Images/ex_heart_64.png");
+	heart2 = createObject("Images/ex_heart_64.png");
+	heart3 = createObject("Images/ex_heart_64.png");
+	locateObject(heart1, problem->ID(), 1180, 24);
+	locateObject(heart2, problem->ID(), 1120, 24);
+	locateObject(heart3, problem->ID(), 1060, 24);
+	showObject(heart1);
+	showObject(heart2);
+	showObject(heart3);
+
 	const auto num_of_differences = 7;
 
-	DifferencePoint points[num_of_differences] = {     // 올바른 위치 X, Y 좌표
-		{ 568, 1186, 594, 54 },
-		{ 99, 717, 551, 17 },
-		{ 383, 1001, 482, 16 },
-		{ 401, 1019, 158, 27 },
-		{ 61, 679, 255, 36 },
-		{ 592, 1210, 421, 35 },
-		{ 320, 938, 117, 13 }
+	DifferencePoint points[num_of_differences] = {     // 올바른 위치 X, Y 좌표, 각각의 네모 크기가 다름
+		{ 568, 1186, 594, 54 },     // 달
+		{ 99, 717, 551, 17 },          // 별
+		{ 383, 1001, 482, 16 },     // 원숭이 귀
+		{ 401, 1019, 158, 27 },     // 색다른 풀
+		{ 61, 679, 255, 36 },          // 색다른 텐트
+		{ 592, 1210, 421, 35 },     // 깃털
+		{ 320, 938, 117, 13 },       // 불의 나무
+	};
+	DifferencePoint worng_points[3] = {   // 왼x, 오x,  y, 네모 반지름 r / 오x-왼x = 618 / 중앙선 = 640
+		{ 0, 0, 0, 0 },
+		{ 0, 0, 0, 0 },
+		{ 0, 0, 0, 0 }
 	};
 
 	auto count = 0;
@@ -71,6 +97,16 @@ int main()
 			}
 		}
 		if (wrong) {      //여기서 true 라는 건 올바른 위치랑 비교했을 때 하나도 없었다는 것
+			if (x > 640) {  // 오른쪽을 클릭
+				worng_points[life - 1] = { x-618, x, y, 0 };
+			}
+			else {
+				worng_points[life - 1] = { x, x+618, y, 0 };
+			}
+			worng_points[life - 1].wrong_show();
+			if(life == 3) hideObject(heart3);
+			if (life == 2) hideObject(heart2);
+			if (life == 1) hideObject(heart1);
 			life--;
 		}
 
