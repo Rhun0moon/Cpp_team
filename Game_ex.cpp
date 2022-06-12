@@ -60,13 +60,14 @@ int main()
 	showTimer(timer);                                       // 타이머 보이도록 
 	auto game_exit = Timer::create(3.f);              // 게임 끝을 위한 타이머 3초
 
-	auto problem = Object::create("Images/problem_ex.png", scene, 0, 0);     // 오브젝트가 장면(scene)을 위에 올라가서 가림
+	auto problem = Object::create("Images/ex_1.png", scene, 0, 0);     // 오브젝트가 장면(scene)을 위에 올라가서 가림
+	//problem->setImage("Images/problem.png");
 	heart1 = createObject("Images/ex_heart_64.png");
 	heart2 = createObject("Images/ex_heart_64.png");
 	heart3 = createObject("Images/ex_heart_64.png");
-	locateObject(heart1, problem->ID(), 1180, 24);
-	locateObject(heart2, problem->ID(), 1120, 24);
-	locateObject(heart3, problem->ID(), 1060, 24);
+	locateObject(heart1, problem->ID(), 1170, 4);
+	locateObject(heart2, problem->ID(), 1100, 4);
+	locateObject(heart3, problem->ID(), 1030, 4);
 	showObject(heart1);
 	showObject(heart2);
 	showObject(heart3);
@@ -76,15 +77,15 @@ int main()
 	const auto num_of_differences = 7;
 
 	DifferencePoint points[num_of_differences] = {     // 올바른 위치 X, Y 좌표, 각각의 네모 크기가 다름
-		{ 568, 1186, 594, 54 },     // 달
-		{ 99, 717, 551, 17 },          // 별
-		{ 383, 1001, 482, 16 },     // 원숭이 귀
-		{ 401, 1019, 158, 27 },     // 색다른 풀
-		{ 61, 679, 255, 36 },          // 색다른 텐트
-		{ 592, 1210, 421, 35 },     // 깃털
-		{ 320, 938, 117, 13 },       // 불의 나무
+		{ 520, 1140, 553, 20 },     // 달
+		{ 107, 727, 540, 15 },        // 별
+		{ 380, 1000, 473, 10 },     // 원숭이 귀
+		{ 395, 1015, 164, 27 },     // 색다른 풀
+		{ 58, 678, 268, 36 },          // 색다른 텐트
+		{ 576, 1196, 421, 35 },     // 깃털
+		{ 318, 938, 130, 13 },       // 불의 나무
 	};
-	DifferencePoint worng_points[3] = {   // 왼x, 오x,  y, 네모 반지름 r / 오x-왼x = 618 / 중앙선 = 640
+	DifferencePoint worng_points[3] = {   // 왼x, 오x,  y, 네모 반지름 r / 오x-왼x = 620 / 중앙선 = 640
 		{ 0, 0, 0, 0 },
 		{ 0, 0, 0, 0 },
 		{ 0, 0, 0, 0 }
@@ -116,6 +117,7 @@ int main()
 			if (life == 1) hideObject(heart1);
 			life--;
 		}
+
 		timer->setOnTimerCallback([&](TimerPtr)->bool {
 			showMessage("타임 오버 실패 - 3초후 자동 꺼짐");
 			game_exit->start();
@@ -123,6 +125,7 @@ int main()
 			});
 		
 		if (life == 0) {
+			timer->stop();
 			showMessage("목숨 없음 실패 - 3초후 자동 꺼짐");
 			game_exit->start();
 		}
