@@ -1,4 +1,5 @@
-// 몰랑이 오x-왼x = 620
+// 몰랑이
+	const auto num_of_differences = 7;
 	DifferencePoint points[num_of_differences] = {
 		{ 520, 1140, 553, 20 },     // 달
 		{ 107, 727, 540, 15 },        // 별
@@ -9,7 +10,8 @@
 		{ 318, 938, 130, 13 },       // 불의 나무
 	};
 
-//해변 동물 오x-왼x = 607
+// 해변 동물
+	const auto num_of_differences = 7;
 	DifferencePoint points[num_of_differences] = {
 		{ 417, 1024, 535, 20 },     // 펭귄모자
 		{ 216, 823, 352, 20 },        // 고슴도치 옆 로션
@@ -18,4 +20,21 @@
 		{ 516, 1123, 255, 20 },          // 토끼 아이스크림
 		{ 226, 833, 147, 20 },     // 펭귄 사이 조개
 		{ 588, 1195, 120, 20 },       // 오른쪽 끝 깃발
+	};
+// 스누피
+	const auto num_of_differences = 4;
+	DifferencePoint points_a[num_of_differences] = {
+		{590, 1215  ,405, 25},     // 풀 625
+		{ 445, 1070 , 606, 70},        // 나무
+		{ 392,  1017, 161, 30},     // 토끼
+		{ 216,  837 , 516, 20},     // 잎
+	};
+// 스폰지밥 -> y좌표 바꾸기
+	const auto num_of_differences = 5;
+	DifferencePoint points_a[num_of_differences] = {
+		{48, 667, 385, 15}, //뚱이 왼쪽 눈
+		{130, 780, 326, 24}, //뚱이 두건 매듭
+		{317, 967, 173, 27}, //스폰지밥 모자 해골 눈
+		{298, 945, 526, 14}, //스폰지밥 브이넥
+		{460, 1105, 559, 18} //스폰지밥 자켓 주머니
 	};
