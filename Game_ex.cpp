@@ -15,7 +15,7 @@ public:
 ScenePtr scene = nullptr;            // 바탕을 위한 그림, nullptr는 null 포인터 값을 의미
 SceneID sceneID;
 ObjectID heart1, heart2, heart3;           // 목숨을 위한 그림
-const auto check_radius = 25;   // 체크가 중앙에 오도록 하기 위해 뺀 값
+const auto check_radius = 16;   // 체크가 중앙에 오도록 하기 위해 뺀 값
 
 class DifferencePoint {
 	Rect left_rect, right_rect;
@@ -24,8 +24,8 @@ class DifferencePoint {
 
 public:
 	DifferencePoint(int lcx, int rcx, int cy, int r) : left_rect(lcx, cy, r), right_rect(rcx, cy, r) {
-		left_check = Object::create("Images/ex_right_64.png", scene, lcx - check_radius, cy - check_radius, false);
-		right_check = Object::create("Images/ex_right_64.png", scene, rcx - check_radius, cy - check_radius, false);
+		left_check = Object::create("Images/ex_right_32.png", scene, lcx - check_radius, cy - check_radius, false);
+		right_check = Object::create("Images/ex_right_32.png", scene, rcx - check_radius, cy - check_radius, false);
 	}
 	bool checkIn(int x, int y) const {        // 마우스가 올바른 곳을 클릭했는지 판단 - 예/아니요
 		return left_rect.checkIn(x, y) || right_rect.checkIn(x, y);        // Rect의 checkIn으로 왼쪽과 오른쪽 중 어디든 상관없이 속하는지만 판단
@@ -38,8 +38,8 @@ public:
 	}
 
 	void wrong_show() {                    // 오른쪽 왼쪽에 빨강 그림을 출력함
-		setObjectImage(left_check->ID(), "Images/ex_wrong_64.png");
-		setObjectImage(right_check->ID(), "Images/ex_wrong_64.png");
+		setObjectImage(left_check->ID(), "Images/ex_wrong_32.png");
+		setObjectImage(right_check->ID(), "Images/ex_wrong_32.png");
 		left_check->show();
 		right_check->show();
 
@@ -56,11 +56,17 @@ int main()
 
 	scene = Scene::create("틀린그림찾기", "Images/problem.png");               // 장면 생성
 
-	auto timer = Timer::create(10.f);              // 타이머 10초
+	auto timer = Timer::create(50.f);              // 타이머 10초
 	showTimer(timer);                                       // 타이머 보이도록 
 	auto game_exit = Timer::create(3.f);              // 게임 끝을 위한 타이머 3초
 
-	auto problem = Object::create("Images/ex_1.png", scene, 0, 0);     // 오브젝트가 장면(scene)을 위에 올라가서 가림
+	auto Button_a = Object::create("Images/Images/ex_heart_64.png", scene, 600, 320);
+	Button_a->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {
+
+		return true;
+		});
+
+	auto problem = Object::create("Images/ex_2.png", scene, 0, 0);     // 오브젝트가 장면(scene)을 위에 올라가서 가림
 	//problem->setImage("Images/problem.png");
 	heart1 = createObject("Images/ex_heart_64.png");
 	heart2 = createObject("Images/ex_heart_64.png");
@@ -72,20 +78,26 @@ int main()
 	showObject(heart2);
 	showObject(heart3);
 
-
-
 	const auto num_of_differences = 7;
-
-	DifferencePoint points[num_of_differences] = {     // 올바른 위치 X, Y 좌표, 각각의 네모 크기가 다름
+	DifferencePoint points_a[num_of_differences] = {     // 올바른 위치 X, Y 좌표, 각각의 네모 크기가 다름          //몰랑이
 		{ 520, 1140, 553, 20 },     // 달
 		{ 107, 727, 540, 15 },        // 별
-		{ 380, 1000, 473, 10 },     // 원숭이 귀
+		{ 380, 1000, 473, 15 },     // 원숭이 귀
 		{ 395, 1015, 164, 27 },     // 색다른 풀
 		{ 58, 678, 268, 36 },          // 색다른 텐트
 		{ 576, 1196, 421, 35 },     // 깃털
 		{ 318, 938, 130, 13 },       // 불의 나무
 	};
-	DifferencePoint worng_points[3] = {   // 왼x, 오x,  y, 네모 반지름 r / 오x-왼x = 620 / 중앙선 = 640
+	DifferencePoint points_b[num_of_differences] = {     // 올바른 위치 X, Y 좌표, 각각의 네모 크기가 다름          //해변동물
+		{ 417, 1024, 535, 20 },     // 펭귄모자
+		{ 216, 823, 352, 20 },        // 고슴도치 옆 로션
+		{ 300, 907, 342, 20 },     // 수박먹는 토끼 사이 오렌지
+		{ 309, 916, 280, 20 },     // 수박먹는 토끼 사이 수박 씨
+		{ 516, 1123, 255, 20 },          // 토끼 아이스크림
+		{ 226, 833, 147, 20 },     // 펭귄 사이 조개
+		{ 588, 1195, 120, 20 },       // 오른쪽 끝 깃발
+	};
+	DifferencePoint worng_points[3] = {   // 왼x, 오x,  y, 네모 반지름 r 
 		{ 0, 0, 0, 0 },
 		{ 0, 0, 0, 0 },
 		{ 0, 0, 0, 0 }
@@ -96,9 +108,9 @@ int main()
 	problem->setOnMouseCallback([&](ObjectPtr object, int x, int y, MouseAction action)->bool {    // problem 오브젝트를 클릭을 한 위치
 		auto wrong = true;
 		for (auto i = 0; i < num_of_differences; ++i) {
-			if (points[i].checkIn(x, y)) {          // 마우스가 올바르게 클릭했는가?
-				if (!points[i].found()) {              // 이미 클릭된 올바른 위치가 아닌 경우
-					points[i].show();                   // 초록 그림 보이는 함수
+			if (points_a[i].checkIn(x, y)) {          // 마우스가 올바르게 클릭했는가?
+				if (!points_a[i].found()) {              // 이미 클릭된 올바른 위치가 아닌 경우
+					points_a[i].show();                   // 초록 그림 보이는 함수
 					count++;
 				}
 				wrong = false;                             // num_of_differences번 올바른 위치이랑 비교했을 때 하나라도 같으면 false임
@@ -149,3 +161,4 @@ int main()
 	startGame(scene);
 	return 0;
 }
+
